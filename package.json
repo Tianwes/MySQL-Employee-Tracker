@@ -1,25 +1,29 @@
 {
-  "name": "MySQL-Employee-Tracker",
+  "name": "mysql-employee-tracker",
   "version": "1.0.0",
   "description": "Allows users to interact with an employee database",
   "main": "employee_tracker.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run start"
+    "start": "npm start"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Tianwes/MySQL-Employee-Tracker.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Tiffany Weaver",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Tianwes/MySQL-Employee-Tracker/issues"
   },
   "homepage": "https://github.com/Tianwes/MySQL-Employee-Tracker#readme",
   "dependencies": {
+    "chalk": "^4.1.0",
+    "console.table": "^0.10.0",
+    "figlet": "^1.5.0",
     "inquirer": "^8.0.0",
     "mysql": "^2.18.1"
-  }
+  },
+  "devDependencies": {}
 }
