@@ -21,7 +21,9 @@ connection.connect((err) => {
         width: 80,
         whitespaceBreak: true
     }));
-
+    runEmpFirstNameArr();
+    runEmpLastNameArr();
+    runEmpRolesArr();
     runTracker();
 });
 
@@ -38,7 +40,6 @@ const runTracker = () => {
                 'ADD Employee',
                 'VIEW Departments',
                 'VIEW Roles',
-                'VIEW Employees',
                 'UPDATE Employee roles',
             ],
         })
@@ -48,7 +49,7 @@ const runTracker = () => {
                     employeeTable();
                     runTracker();
                     break;
-
+                // ----------------------------
                 case 'ADD Department':
                     addDepartment();
                     break;
@@ -60,8 +61,7 @@ const runTracker = () => {
                 case 'ADD Employee':
                     addEmployee();
                     break;
-                // ----------------------------------------------------------------
-                //                    HOW TO VIEW ?? console.table
+                // -----------------------------
                 case 'VIEW Departments':
                     viewDepartments();
                     break;
@@ -69,27 +69,24 @@ const runTracker = () => {
                 case 'VIEW Roles':
                     viewRoles();
                     break;
-
-                case 'VIEW Employees':
-                    viewEmployees();
-                    break;
-
-                case 'UPDATE employee roles':
+                // -----------------------------
+                case 'UPDATE Employee roles':
                     updateRoles();
                     break;
 
                 default:
                     console.log(`Invalid action: ${answer.action}`);
                     break;
-                // do I need to (inner)join somewhere??
             }
         });
 };
 // how to push full list to dataTable - it's being pushed to diff arrs
 //function that returns array - use return 'value' RETURN VALUE!!!!!!!!!
-let employeesArr = [];
+let empFnameArr = [];
+let empLnameArr = [];
 let rolesArr = [];
 let departArr = [];
+let managersArr = [];
 
 const employeeTable = () => {
     // console.log(dataTable)
@@ -123,6 +120,7 @@ function addDepartment() {
 };
 
 function addRole() {
+    
     connection.query('SELECT * FROM department').then(function (response) {
         console.log(response)
     });
@@ -144,7 +142,7 @@ function addRole() {
             connection.query(query, [answer.roleName, answer.roleSalary], (err, res) => {
                 if (err) throw err;
                 rolesArr.push(roleName, roleSalary)
-                console.log(chalk.green('New ROLE and SALARY were added to database'));
+                console.log('New ROLE and SALARY were added to database');
                 runTracker();
             })
         });
@@ -161,22 +159,40 @@ function addEmployee() {
             name: 'employeeLN',
             type: 'input',
             message: "Employee's LAST name ?:",
-        }])
+        },
+        {
+            name: 'employeeRole',
+            type: 'input',
+            message: "Employee's ROLE ?:",
+        }
+        ])
         .then((answer) => {
             const query = `INSERT INTO employee (first_name, last_name) VALUES (?, ?);`;
             connection.query(query, [answer.employeeFN, answer.employeeLN], (err, res) => {
                 if (err) throw err;
-                employeesArr.push(answer.employeeFN, answer.employeeLN)
-                console.log(chalk.green('New EMPLOYEE was ADDED added to database'));
+            connection.query(query, [answer.employeeRole], (err, res) => {
+                if (err) throw err;    
+                empFnameArr.push(answer.employeeFN)
+                empLnameArr.push(answer.employeeLN)
+                rolesArr.push(answer.employeeRole)
+                console.log(chalk.green('New EMPLOYEE and Role have ADDED added to database'));
                 runTracker();
             })
         });
+})
 }
 
-// by view : view all ? or view just roles, just departments ??
 function viewDepartments() {
-    console.log('departments');
-    runTracker();
+    connection.query("SELECT * FROM department", function (err, res) {
+        if (err) throw err;
+        console.table(
+            "-------------------------------------",
+            "All Departments",
+            "-------------------------------------",
+            res
+        );
+        runTracker();
+    });
 };
 
 function viewRoles() {
@@ -188,26 +204,92 @@ function viewRoles() {
             "-------------------------------------",
             res
         );
-    runTracker();   
+        runTracker();
     });
 };
 
-function viewEmployees() {
-    console.log('displays employees');
-    runTracker();
-};
 // ------------------------------------------------------------
-// function updateRoles() {
+function runEmpFirstNameArr() {
+	const query = `
+    SELECT first_name
+    FROM employee;`;
 
-//     const query = `UPDATE role
-//             SET title = answer.title, 
-//                 salary = answer.salary, 
-//                WHERE id = ?;`;
-//     connection.query(query, [answer.title, answer.salary], (err, res) => {
-//         if (err) throw err;
-//         console.log(chalk.green('New ROLE and SALARY were Updated'));
-//         runTracker();
-//     })
-// };
+	connection.query(query, function (err, res) {
+		if (err) throw err;
+		for (let i = 0; i < res.length; i++) {
+			empFnameArr.push(res[i].first_name);
+		}
+	});
+}
 
+function runEmpLastNameArr() {
+	const query = `
+    SELECT last_name
+    FROM employee;`;
+
+	connection.query(query, function (err, res) {
+		if (err) throw err;
+		for (let i = 0; i < res.length; i++) {
+			empLnameArr.push(res[i].last_name);
+		}
+	});
+}
+
+function runEmpRolesArr() {
+    const query = `
+    SELECT title
+    FROM role;`;
+
+	connection.query(query, function (err, res) {
+		if (err) throw err;
+		for (let i = 0; i < res.length; i++) {
+			rolesArr.push(res[i].title);
+		}
+	});
+}
+
+
+function updateRoles() {
+    inquirer
+        .prompt([{
+            name: 'employeeSelect',
+            type: 'list',
+            message: 'SELECT an EMPLOYEE to change their ROLE:',
+            choices: empFnameArr
+        },
+        {
+            name: 'roleSelect',
+            type: 'rawlist',
+            message: 'SELECT a NEW ROLE:',
+            choices: rolesArr
+        }])
+        .then((answer) => {
+            console.table(answer)
+            console.log(chalk.green('New ROLE and SALARY were Updated'));
+             runTracker();
+        })
+};
+// function updateRoles(){
+//     const currentEmployeesList = employees.map(({ id, first_name, last_name }) => ({
+//         name: `${first_name} ${last_name}`,
+//         value: id
+//       }));
+
+//     inquirer
+//         .prompt({
+//             name: 'employeeSelect',
+//             type: 'rawlist',
+//             message: 'SELECT an EMPLOYEE to change their ROLE:',
+//             choices: currentEmployeesList
+//         })
+//         .then((answer) => {
+//             switch (answer.action) {
+//                 case 'VIEW Full Employees Database':
+//                     employeeTable();
+//                     runTracker();
+//                     break;
+//             }
+// })
+// })
+// }
 
