@@ -267,101 +267,14 @@ function updateRoles() {
                     
                 });
                 
-                // }
+              
             })
             console.log(chalk.green('New ROLE and SALARY were Updated'));
             console.log(res)
             runTracker();
-        // })
+        
     })
 }
-// function updateRoles() {
-//     connection.query('SELECT role.id, role.title FROM role ORDER BY role.id;', (err, res) => {
-//                 if (err) throw err;
-//     inquirer
-//         .prompt(
-//             {
-//                 name: 'roleSelect',
-//                 type: 'list',
-//                 choices: () => res.map(res => res.title),
-//                 message: 'SELECT a NEW ROLE: '
-//             }
-//         )
-//         .then((answer) => {
-
-//             // connection.query(query, [answer.employeeSelectFN, answer.employeeSelectLN, answer.roleSelect], (err, res) => {
-//             //     if (err) throw err;
-
-//                 connection.query(`UPDATE employee 
-//                 SET role_id = ${roleId}
-//                 WHERE employee.id = ${answer.name}`, (err, res) => {
-//                 if (err) throw err;
-//                 console.log(chalk.green('New ROLE and SALARY were Updated'));
-//                     console.log(res)
-//                 });
-//                 runTracker();
-//             })
-
-//         })
-//     }
-
-
-
-//     connection.query('SELECT role.id, role.title FROM role ORDER BY role.id;', async (err, res) => {
-//         if (err) throw err;
-//         const { role } = await inquirer.prompt([
-//             {
-//                 name: 'role',
-//                 type: 'list',
-//                 choices: () => res.map(res => res.title),
-//                 message: 'What is the new employee role?: '
-//             }
-//         ]);
-//         let roleId;
-//         for (const row of res) {
-//             if (row.title === role) {
-//                 roleId = row.id;
-//                 continue;
-//             }
-//         }
-//         connection.query(`UPDATE employee 
-//         SET role_id = ${roleId}
-//         WHERE employee.id = ${employeeId.name}`, async (err, res) => {
-//             if (err) throw err;
-//             console.log('Role has been updated..')
-//             prompt();
-//         });
-//     });
-// }
-
-
-
-
-
-
-// function updateRoles(){
-//     const currentEmployeesList = employees.map(({ id, first_name, last_name }) => ({
-//         name: `${first_name} ${last_name}`,
-//         value: id
-//       }));
-
-//     inquirer
-//         .prompt({
-//             name: 'employeeSelect',
-//             type: 'rawlist',
-//             message: 'SELECT an EMPLOYEE to change their ROLE:',
-//             choices: currentEmployeesList
-//         })
-//         .then((answer) => {
-//             switch (answer.action) {
-//                 case 'VIEW Full Employees Database':
-//                     employeeTable();
-//                     runTracker();
-//                     break;
-//             }
-// })
-// })
-// }
 
 
 
