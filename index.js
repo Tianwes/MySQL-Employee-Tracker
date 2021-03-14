@@ -47,7 +47,7 @@ const runTracker = () => {
             switch (answer.action) {
                 case 'VIEW Full Employees Database':
                     employeeTable();
-                    runTracker();
+                    // runTracker();
                     break;
                 // ----------------------------
                 case 'ADD Department':
@@ -97,10 +97,10 @@ const employeeTable = () => {
         fullDataTable.push(res);
         console.log('\n');
         console.table(res)
-
         runTracker();
+        
     })
-
+    
 }
 
 function addDepartment() {
@@ -117,10 +117,10 @@ function addDepartment() {
                 if (err) throw err;
                 departArr.push(answer.depName)
             })
-            console.log(chalk.green('Department was added to database'));
+        console.log(chalk.green('Department was added to database'));
             runTracker();
-
         });
+        
 };
 
 function addRole() {
