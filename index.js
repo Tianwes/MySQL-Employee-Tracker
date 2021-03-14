@@ -98,9 +98,9 @@ const employeeTable = () => {
         console.log('\n');
         console.table(res)
         runTracker();
-        
+
     })
-    
+
 }
 
 function addDepartment() {
@@ -117,10 +117,10 @@ function addDepartment() {
                 if (err) throw err;
                 departArr.push(answer.depName)
             })
-        console.log(chalk.green('Department was added to database'));
+            console.log(chalk.green('Department was added to database'));
             runTracker();
         });
-        
+
 };
 
 function addRole() {
@@ -178,7 +178,7 @@ function addEmployee() {
             console.log(chalk.green('New EMPLOYEE and Role have ADDED added to database'));
             runTracker();
         });
-    
+
 }
 
 function viewDepartments() {
@@ -245,40 +245,100 @@ function runEmpRolesArr() {
     });
 }
 
-
 function updateRoles() {
-    inquirer
-        .prompt([{
-            name: 'employeeSelectFN',
-            type: 'list',
-            message: "SELECT the EMPLOYEE's FIRST name :",
-            choices: empFnameArr
-        },
-        {
-            name: 'employeeSelectLN',
-            type: 'list',
-            message: "SELECT the EMPLOYEE's LAST name :",
-            choices: empLnameArr
-        },
-        {
-            name: 'roleSelect',
-            type: 'list',
-            message: 'SELECT a NEW ROLE:',
-            choices: rolesArr
-        }])
-        .then((answer) => {
-            const query =
-                `UPDATE employee 
-        SET role_id = ${answer.roleSelect}
-        WHERE employee.id = ${answer.roleSelect}`
-            connection.query(query, [answer.employeeSelectFN, answer.employeeSelectLN, answer.roleSelect], (err, res) => {
-                if (err) throw err;
-                console.log(chalk.green('New ROLE and SALARY were Updated'));
-                runTracker();
-            })
+    connection.query('SELECT CONCAT(employee.first_name, " ", employee.last_name) AS empFullName FROM employee;', (err, res) => {
+        if (err) throw err;
+        inquirer
+            .prompt(
+                {
+                    name: 'empSelectFull',
+                    type: 'list',
+                    message: 'SELECT EPLOYEE to change role: ',
+                    choices: () => res.map(res => res.empFullName)
+                }
+            )
+            .then((answer) => {
+                const query = `UPDATE employee 
+                SET role_id = ${answer.empSelectFull}
+                WHERE employee.id = role.id`;
+                connection.query(query, [answer.empSelectFull], (err, res) => {
 
-        });
+                    if (err) throw err;
+                    
+                });
+                
+                // }
+            })
+            console.log(chalk.green('New ROLE and SALARY were Updated'));
+            console.log(res)
+            runTracker();
+        // })
+    })
 }
+// function updateRoles() {
+//     connection.query('SELECT role.id, role.title FROM role ORDER BY role.id;', (err, res) => {
+//                 if (err) throw err;
+//     inquirer
+//         .prompt(
+//             {
+//                 name: 'roleSelect',
+//                 type: 'list',
+//                 choices: () => res.map(res => res.title),
+//                 message: 'SELECT a NEW ROLE: '
+//             }
+//         )
+//         .then((answer) => {
+
+//             // connection.query(query, [answer.employeeSelectFN, answer.employeeSelectLN, answer.roleSelect], (err, res) => {
+//             //     if (err) throw err;
+
+//                 connection.query(`UPDATE employee 
+//                 SET role_id = ${roleId}
+//                 WHERE employee.id = ${answer.name}`, (err, res) => {
+//                 if (err) throw err;
+//                 console.log(chalk.green('New ROLE and SALARY were Updated'));
+//                     console.log(res)
+//                 });
+//                 runTracker();
+//             })
+
+//         })
+//     }
+
+
+
+//     connection.query('SELECT role.id, role.title FROM role ORDER BY role.id;', async (err, res) => {
+//         if (err) throw err;
+//         const { role } = await inquirer.prompt([
+//             {
+//                 name: 'role',
+//                 type: 'list',
+//                 choices: () => res.map(res => res.title),
+//                 message: 'What is the new employee role?: '
+//             }
+//         ]);
+//         let roleId;
+//         for (const row of res) {
+//             if (row.title === role) {
+//                 roleId = row.id;
+//                 continue;
+//             }
+//         }
+//         connection.query(`UPDATE employee 
+//         SET role_id = ${roleId}
+//         WHERE employee.id = ${employeeId.name}`, async (err, res) => {
+//             if (err) throw err;
+//             console.log('Role has been updated..')
+//             prompt();
+//         });
+//     });
+// }
+
+
+
+
+
+
 // function updateRoles(){
 //     const currentEmployeesList = employees.map(({ id, first_name, last_name }) => ({
 //         name: `${first_name} ${last_name}`,
